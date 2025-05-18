@@ -26,7 +26,7 @@
     "lint:scripts": "eslint ./src --ext .ts",
     "lint:styles": "stylelint ./**/*.{css,scss}",
     "format:scripts": "prettier ./src --write",
-    "format:styles": "stylelint ./**/*.{css,scss} --fix"
+    "format:styles": "stylelint ./src/**/*.{css,scss} --fix"
   },
   "devDependencies": {
     "@types/node": "^22.8.1",

@@ -25,7 +25,7 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "src/tour.ts"),
       name: "tour",
-      formats: ["es", "cjs", "umd", "iife"],
+      formats: ["es", "cjs", "iife"],
       fileName: (format) => `site-tour.${format}.js`,
     },
   },

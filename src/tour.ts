@@ -1,141 +1,188 @@
-// Main library exports - these are packaged in your distributable
+import { Step, TourOption } from "./tour.types";
+import { handleBackdropSvg } from "./backdrop";
+import { DEFAULT_OPTIONS, scrollToViewAndWait } from "./utils";
+import { calculatePosition, createPopover } from "./popover";
+
 export class SiteTour {
-  options = {
-    steps: [],
-    padding: 10,
-    disableClose: false,
-  };
-
-  state = {
-    activeSelector: "",
-  };
-
-  api: {
-    backdrop: HTMLElement | null;
-  } = {
-    backdrop: null,
-  };
+  private options: TourOption = DEFAULT_OPTIONS;
+  private listenersInitialized = false;
+  private popoverElement: HTMLElement;
+  private isHighlighting: boolean;
+  private activeElement: Element;
+  private backdrop!: SVGElement;
+  private currentIndex = 0;
 
   constructor(options: any) {
     this.options = {
-      ...this.options,
+      ...DEFAULT_OPTIONS,
       ...options,
     };
-    this.initializeEventListeners();
+  }
+
+  get currentStep(): Step {
+    if (!this.options.steps?.length) {
+      return null;
+    }
+    return this.options.steps[this.currentIndex];
   }
 
   start() {
-    console.log(this.options);
     if (this.options.steps?.length) {
-      this.highlightElement(this.options.steps[0]);
+      this.currentIndex = 0;
+      this.initializeEventListeners();
+      this.showStep(this.currentIndex);
     }
   }
 
-  highlightStepsSequentially(steps: string[], index = 0) {
-    if (index >= steps.length) {
-      this.destroy(); // Remove the highlight at the end
-      return;
+  private showStep(index?: number) {
+    this.initRender();
+    if (index !== undefined) {
+      this.currentIndex = index;
+      this.setActiveElement();
     }
-
-    this.highlightElement(steps[index]);
-
-    setTimeout(() => {
-      this.fadeOutHighlight();
-      setTimeout(() => {
-        this.highlightStepsSequentially(steps, index + 1);
-      }, 500); // Wait for fade-out before showing next
-    }, 2000); // 2 seconds delay per step
+    this.highlightElement();
   }
 
-  fadeOutHighlight() {
-    const svg = document.querySelector(".highlight") as HTMLElement;
-    if (svg) {
-      svg.style.opacity = "0";
-    }
-  }
-
-  highlightElement(selector: string) {
-    this.state.activeSelector = selector;
-    this.createOrUpdateHighlight();
-  }
-
-  destroy() {
-    const svg = document.querySelector(".highlight");
-    if (svg) {
-      svg.remove();
-    }
-    document.body.removeEventListener("click", this.bodyClickEvent);
-    window.removeEventListener("resize", this.createOrUpdateHighlight.bind(this));
-    window.removeEventListener("scroll", this.createOrUpdateHighlight.bind(this));
-  }
-
-  createOrUpdateHighlight() {
-    if (!this.state.activeSelector) return;
-
-    const target = document.querySelector(this.state.activeSelector);
+  setActiveElement() {
+    const step = this.options.steps[this.currentIndex];
+    if (!step) return;
+    const target = document.querySelector(step.selector);
     if (!target) {
       console.error("Target element not found");
       return;
     }
-
-    let svg: any = document.querySelector(".highlight");
-    if (!svg) {
-      svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      svg.setAttribute("class", "highlight");
-      svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-      svg.style.position = "fixed";
-      svg.style.top = "0";
-      svg.style.left = "0";
-      svg.style.width = "100vw";
-      svg.style.height = "100vh";
-      if (this.options.disableClose) {
-        svg.style.pointerEvents = "none";
-      }
-      svg.style.zIndex = "1000";
-      document.body.appendChild(svg);
-    }
-
-    // Clear existing content
-    svg.innerHTML = "";
-
-    // Calculate target position with padding
-    const rect = target.getBoundingClientRect();
-    const padding = this.options.padding;
-    const x = rect.left - padding;
-    const y = rect.top - padding;
-    const width = rect.width + padding * 2;
-    const height = rect.height + padding * 2;
-
-    // Create the path using evenodd fill rule
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("fill", "rgba(0, 0, 0, 0.7)");
-    path.setAttribute("fill-rule", "evenodd");
-
-    // Outer and Inner Path (cutout effect)
-    const outerPath = `M 0 0 H ${window.innerWidth} V ${window.innerHeight} H 0 Z`;
-    const innerPath = `M ${x} ${y} h ${width} v ${height} h -${width} Z`;
-
-    // Combine paths using evenodd for cutout
-    path.setAttribute("d", `${outerPath} ${innerPath}`);
-    svg.appendChild(path);
-    this.api.backdrop = svg;
-    svg.style.opacity = "1";
+    this.resetHighlightState();
+    target.classList.add("highlight-active");
+    this.activeElement = target;
   }
 
-  bodyClickEvent = (event: any) => {
+  next() {
+    if (this.isHighlighting) {
+      return;
+    }
+    if (this.currentIndex < this.options.steps.length - 1) {
+      this.currentIndex = this.currentIndex + 1;
+      this.setActiveElement();
+      this.showStep();
+    }
+  }
+
+  prev() {
+    if (this.isHighlighting) {
+      return;
+    }
+    if (this.currentIndex > 0) {
+      this.currentIndex = this.currentIndex - 1;
+      this.setActiveElement();
+      this.showStep();
+    }
+  }
+
+  private initializeEventListeners() {
+    if (!this.listenersInitialized) {
+      document.body.addEventListener("click", this.bodyClickEvent);
+      window.addEventListener("resize", this.updateHighlight);
+      window.addEventListener("scroll", this.updateHighlight);
+      this.listenersInitialized = true;
+    }
+  }
+
+  destroy() {
+    this.backdrop?.remove();
+    this.popoverElement?.remove();
+    document.body.removeEventListener("click", this.bodyClickEvent);
+    window.removeEventListener("resize", this.updateHighlight);
+    window.removeEventListener("scroll", this.updateHighlight);
+    this.listenersInitialized = false;
+    this.currentIndex = 0;
+    this.resetHighlightState();
+    this.isHighlighting = false;
+    this.activeElement = null;
+  }
+
+  private async highlightElement() {
+    await this.highlightSelector();
+    this.appendTooltip();
+    this.isHighlighting = false;
+  }
+
+  // Reset for new highlight step (call this for next/prev)
+  private resetHighlightState() {
+    document.querySelectorAll(".highlight-active").forEach(el => el.classList.remove("highlight-active"));
+  }
+
+  private async highlightSelector() {
+    if (this.isHighlighting) {
+      await scrollToViewAndWait(this.activeElement);
+    }
+    this.handleOverlay();
+  }
+
+  private handleOverlay() {
+    this.backdrop = handleBackdropSvg(this.activeElement, this.options.padding, this.isHighlighting);
+  }
+
+  private createOrUpdateTooltip() {
+    this.popoverElement = createPopover(this.handleNextClick.bind(this), this.handlePrevClick.bind(this));
+    this.popoverElement.querySelector(".tour-header")!.innerHTML =
+      this.currentStep.title || "Step " + (this.currentIndex + 1);
+    this.popoverElement.querySelector(".tour-content")!.innerHTML = this.currentStep.content || "This is a tooltip";
+    this.positionPopover();
+  }
+
+  positionPopover = () => {
+    const { topPosition, leftPosition } = calculatePosition(this.activeElement);
+    // Apply the final calculated positions
+    this.popoverElement.style.top = `${topPosition}px`;
+    this.popoverElement.style.left = `${leftPosition}px`;
+    return;
+  };
+
+  private handlePrevClick() {
+    this.prev();
+  }
+
+  private handleNextClick() {
+    this.next();
+  }
+
+  private updateHighlight = () => {
+    if (!this.activeElement) {
+      console.error("Target element not found");
+      return;
+    }
+    this.handleOverlay();
+    this.positionPopover();
+  };
+
+  private bodyClickEvent = (event: any) => {
     const target = event.target as HTMLElement;
     // Check if the click was on a highlight SVG
-    if (target.parentElement?.matches(".highlight")) {
+    if (target.parentElement?.matches(".tour-highlight-svg")) {
       if (!this.options.disableClose) {
         this.destroy();
       }
     }
   };
 
-  // Event delegation for handling multiple highlights
-  initializeEventListeners() {
-    document.body.addEventListener("click", this.bodyClickEvent);
-    window.addEventListener("resize", this.createOrUpdateHighlight.bind(this));
-    window.addEventListener("scroll", this.createOrUpdateHighlight.bind(this));
+  private appendTooltip() {
+    this.createOrUpdateTooltip();
+    if (this.popoverElement) {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          this.popoverElement.style.opacity = "1";
+          this.popoverElement.style.transform = "scale(1)";
+        }, 150);
+      });
+    }
+  }
+
+  private initRender() {
+    this.isHighlighting = true;
+    if (this.popoverElement) {
+      this.popoverElement.style.transition = "none";
+      this.popoverElement.style.opacity = "0";
+      this.popoverElement.style.transform = "scale(0.95)";
+    }
   }
 }
