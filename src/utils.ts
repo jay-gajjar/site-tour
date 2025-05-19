@@ -1,4 +1,4 @@
-import { TourOption } from "tour.types";
+import { TourOption } from "./tour";
 
 export function scrollToViewAndWait(target: Element): Promise<void> {
   return new Promise(resolve => {
@@ -7,23 +7,20 @@ export function scrollToViewAndWait(target: Element): Promise<void> {
       resolve(); // Already in view, no need to scroll
       return;
     }
-
     target.scrollIntoView({ behavior: "smooth", block: "center" });
-
     const observer = new IntersectionObserver(
       entries => {
         const entry = entries[0];
         if (entry.isIntersecting) {
           observer.disconnect();
-          setTimeout(resolve, 100); // Small delay to ensure full visibility
+          setTimeout(resolve, 100);
         }
       },
       {
         root: null,
-        threshold: 0.1, // 10% of element must be visible
+        threshold: 0.1,
       }
     );
-
     observer.observe(target);
   });
 }
@@ -34,7 +31,8 @@ export function isElementInView(target: Element): boolean {
 }
 
 export const DEFAULT_OPTIONS: TourOption = {
-  steps: [],
+  tourSteps: [],
   padding: 10,
-  disableClose: false,
+  position: "right",
+  preventClose: false,
 };

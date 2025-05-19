@@ -1,7 +1,27 @@
-import { Step, TourOption } from "./tour.types";
 import { handleBackdropSvg } from "./backdrop";
 import { DEFAULT_OPTIONS, scrollToViewAndWait } from "./utils";
-import { calculatePosition, createPopover } from "./popover";
+import "./tour.css";
+import { calculatePosition, clearState, createPopover, updatePopoverContent } from "./popover";
+
+export interface TourOption {
+  tourSteps: TourStep[];
+  position?: Position;
+  padding?: number;
+  preventClose?: boolean;
+  onFinishTour?: () => void;
+}
+
+export interface TourStep {
+  selector: string;
+  title: string;
+  content: string;
+  position?: Position;
+  nextBtnText?: string;
+  prevBtnText?: string;
+  hidePrev?: boolean;
+}
+
+export type Position = 'top' | 'bottom' | 'right' | 'left';
 
 export class SiteTour {
   private options: TourOption = DEFAULT_OPTIONS;
@@ -19,18 +39,34 @@ export class SiteTour {
     };
   }
 
-  get currentStep(): Step {
-    if (!this.options.steps?.length) {
+  get currentStep(): TourStep {
+    if (!this.options.tourSteps?.length) {
       return null;
     }
-    return this.options.steps[this.currentIndex];
+    return this.options.tourSteps[this.currentIndex];
+  }
+
+  get hasNextStep(): boolean {
+    if (!this.options.tourSteps?.length) {
+      return null;
+    }
+    return this.currentIndex < this.options.tourSteps.length - 1;;
+  }
+
+  get hasPrevStep(): boolean {
+    if (!this.options.tourSteps?.length) {
+      return null;
+    }
+    return this.currentIndex > 0;
   }
 
   start() {
-    if (this.options.steps?.length) {
+    if (this.options.tourSteps?.length) {
       this.currentIndex = 0;
       this.initializeEventListeners();
       this.showStep(this.currentIndex);
+    } else {
+      console.error('Please provide tourSteps to begin...!')
     }
   }
 
@@ -43,8 +79,8 @@ export class SiteTour {
     this.highlightElement();
   }
 
-  setActiveElement() {
-    const step = this.options.steps[this.currentIndex];
+  private setActiveElement() {
+    const step = this.options.tourSteps[this.currentIndex];
     if (!step) return;
     const target = document.querySelector(step.selector);
     if (!target) {
@@ -60,7 +96,7 @@ export class SiteTour {
     if (this.isHighlighting) {
       return;
     }
-    if (this.currentIndex < this.options.steps.length - 1) {
+    if (this.currentIndex < this.options.tourSteps.length - 1) {
       this.currentIndex = this.currentIndex + 1;
       this.setActiveElement();
       this.showStep();
@@ -87,22 +123,23 @@ export class SiteTour {
     }
   }
 
-  destroy() {
-    this.backdrop?.remove();
-    this.popoverElement?.remove();
+  private destroy() {
+    this.resetHighlightState();
     document.body.removeEventListener("click", this.bodyClickEvent);
     window.removeEventListener("resize", this.updateHighlight);
     window.removeEventListener("scroll", this.updateHighlight);
+    this.backdrop?.remove();
+    this.popoverElement?.remove();
+    clearState();
     this.listenersInitialized = false;
     this.currentIndex = 0;
-    this.resetHighlightState();
     this.isHighlighting = false;
     this.activeElement = null;
   }
 
   private async highlightElement() {
     await this.highlightSelector();
-    this.appendTooltip();
+    this.appendPopover();
     this.isHighlighting = false;
   }
 
@@ -122,16 +159,14 @@ export class SiteTour {
     this.backdrop = handleBackdropSvg(this.activeElement, this.options.padding, this.isHighlighting);
   }
 
-  private createOrUpdateTooltip() {
+  private createOrUpdatePopover() {
     this.popoverElement = createPopover(this.handleNextClick.bind(this), this.handlePrevClick.bind(this));
-    this.popoverElement.querySelector(".tour-header")!.innerHTML =
-      this.currentStep.title || "Step " + (this.currentIndex + 1);
-    this.popoverElement.querySelector(".tour-content")!.innerHTML = this.currentStep.content || "This is a tooltip";
+    updatePopoverContent(this.currentIndex, this.options.tourSteps);
     this.positionPopover();
   }
 
-  positionPopover = () => {
-    const { topPosition, leftPosition } = calculatePosition(this.activeElement);
+  private positionPopover = () => {
+    const { topPosition, leftPosition } = calculatePosition(this.activeElement, this.currentStep?.position ?? this.options.position);
     // Apply the final calculated positions
     this.popoverElement.style.top = `${topPosition}px`;
     this.popoverElement.style.left = `${leftPosition}px`;
@@ -139,10 +174,20 @@ export class SiteTour {
   };
 
   private handlePrevClick() {
+    if (!this.hasPrevStep) {
+      return;
+    }
     this.prev();
   }
 
   private handleNextClick() {
+    if (!this.hasNextStep) {
+      if (this.options.onFinishTour) {
+        this.options.onFinishTour();
+      }
+      this.destroy();
+      return;
+    }
     this.next();
   }
 
@@ -159,14 +204,14 @@ export class SiteTour {
     const target = event.target as HTMLElement;
     // Check if the click was on a highlight SVG
     if (target.parentElement?.matches(".tour-highlight-svg")) {
-      if (!this.options.disableClose) {
+      if (!this.options.preventClose) {
         this.destroy();
       }
     }
   };
 
-  private appendTooltip() {
-    this.createOrUpdateTooltip();
+  private appendPopover() {
+    this.createOrUpdatePopover();
     if (this.popoverElement) {
       requestAnimationFrame(() => {
         setTimeout(() => {

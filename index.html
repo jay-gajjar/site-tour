@@ -271,13 +271,11 @@
       import { SiteTour } from './src/tour.ts';
 
       document.querySelector('.hero-cta .button-primary').addEventListener('click', init);
-      // document.querySelector('.p-btn').addEventListener('click', prev);
-      // document.querySelector('.n-btn').addEventListener('click', next);
       let siteTour;
       function init() {
         siteTour = null;
         siteTour = new SiteTour({
-          steps: [
+          tourSteps: [
             '.hero-title', '.hero-paragraph', '.hero-cta', 
             '.feature:first-child',
             '.feature:nth-child(2)',
@@ -287,10 +285,14 @@
             return {
               selector: s,
               title: `Title ${i}`,
+              position: i === 2 ? 'bottom' : null,
               content: i === 2 ? `It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.` : `Descrition ${i}`,
             }
           }),
-          disableClose: false
+          onFinishTour: () => {
+            alert('done');
+          },
+          preventClose: false
         });
         siteTour.start();
       }

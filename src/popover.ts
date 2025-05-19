@@ -1,3 +1,6 @@
+import { isElementInView } from "./utils";
+import { Position, TourStep } from "./tour";
+
 let popoverElement: HTMLElement;
 let popoverHTML: HTMLElement;
 export function createPopover(next: () => void, prev: () => void): HTMLElement {
@@ -31,7 +34,29 @@ export function createPopover(next: () => void, prev: () => void): HTMLElement {
   return popoverElement;
 }
 
-export function calculatePosition(activeEl: Element): {
+export function updatePopoverContent(currentIndex: number, steps: TourStep[]) {
+  const currentStep = steps[currentIndex];
+  if (!currentStep) {
+    return;
+  }
+  popoverElement.querySelector(".tour-header")!.innerHTML =
+    currentStep.title || "Step " + (currentIndex + 1);
+  popoverElement.querySelector(".tour-content")!.innerHTML = currentStep.content || "This is a popover";
+  const prevButton = popoverHTML.querySelector(".tour-prev-btn") as HTMLButtonElement;
+  const nextButton = popoverHTML.querySelector(".tour-next-btn") as HTMLButtonElement;
+  const nextText = currentIndex === steps.length - 1 ? 'Done' : `Next \u2192`;
+  nextButton.innerHTML = nextText;
+  if (currentStep?.nextBtnText || currentStep?.prevBtnText) {
+    prevButton.innerHTML = currentStep?.prevBtnText ?? `\u2190 Prev`;
+    nextButton.innerHTML = currentStep?.nextBtnText ?? nextText;
+  }
+  if (prevButton) {
+    prevButton.disabled = currentIndex === 0;
+    prevButton.style.opacity = currentStep.hidePrev ? '0' : prevButton.disabled ? '0.7' : '1';
+  }
+}
+
+export function calculatePosition(activeEl: Element, position: Position): {
   topPosition: Number;
   leftPosition: Number;
 } {
@@ -41,7 +66,7 @@ export function calculatePosition(activeEl: Element): {
 
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
-  let preferredPosition: any = "right";
+  let preferredPosition: any = position;
   // Reset arrow classes
   const popoverHTML = popoverElement.querySelector(".tour-popover-container");
   popoverHTML.classList.remove("tour-arrow-top", "tour-arrow-bottom", "tour-arrow-left", "tour-arrow-right");
@@ -52,7 +77,7 @@ export function calculatePosition(activeEl: Element): {
     preferredPosition = "top"; // If scrolled down, show above with bottom arrow
   }
   // Attempt preferred position
-  const tryPosition = (pos: string) => {
+  const tryPosition = (pos: Position) => {
     // Reset arrow classes
     popoverHTML.classList.remove("tour-arrow-top", "tour-arrow-bottom", "tour-arrow-left", "tour-arrow-right");
     switch (pos) {
@@ -82,7 +107,7 @@ export function calculatePosition(activeEl: Element): {
   // Try the preferred position first
   tryPosition(preferredPosition);
 
-  const isOutViewPort = targetRect.top < 0 || targetRect.bottom > viewportHeight;
+  const isOutViewPort = !isElementInView(activeEl);
   const isOverflows =
     topPosition < 0 ||
     topPosition + popoverElement.offsetHeight > viewportHeight ||
@@ -90,7 +115,8 @@ export function calculatePosition(activeEl: Element): {
     leftPosition + popoverElement.offsetWidth > viewportWidth;
   // Auto-adjust if it overflows
   if (isOverflows && !isOutViewPort) {
-    const positions = ["top", "bottom", "left", "right"].filter(p => p !== preferredPosition);
+    const allPositions: Position[] = ['top', 'bottom', 'right', 'left'];
+    const positions = allPositions.filter(p => p !== preferredPosition);
     for (const pos of positions) {
       tryPosition(pos);
       if (
@@ -109,4 +135,9 @@ export function calculatePosition(activeEl: Element): {
   leftPosition = Math.max(10, Math.min(leftPosition, viewportWidth - popoverElement.offsetWidth - 10));
 
   return { topPosition, leftPosition };
+}
+
+export function clearState() {
+  popoverElement = null;
+  popoverHTML = null;
 }

@@ -49,7 +49,7 @@
   min-width: 100px;
   justify-content: center;
   align-items: center;
-  line-height: 1.3;
+  line-height: 1;
   transition:
     background-color 0.2s,
     color 0.2s,
@@ -57,16 +57,16 @@
 }
 
 .tour-btn:disabled {
-  background-color: #92d0f1; /* Light faded blue */
-  border-color: #b3e4ff;
-  color: #e1f4ff; /* Faded text color */
+  background-color: #92a2abe3;
+  border-color: transparent;
+  color: #deebf3;
   cursor: not-allowed;
   pointer-events: none;
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 .tour-btn:hover {
-  background-color: #023453; /* Darker blue for hover */
+  background-color: #023453;
   border-color: #023453;
 }
 
