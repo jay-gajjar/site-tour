@@ -24,10 +24,15 @@ export default defineConfig({
     sourcemap: true,
     lib: {
       entry: path.resolve(__dirname, "src/tour.ts"),
-      name: "tour",
-      formats: ["es", "cjs", "iife"],
+      name: "siteTour",
+      formats: ["es", "cjs", "umd", "iife"],
       fileName: (format) => `site-tour.${format}.js`,
     },
+    rollupOptions: {
+      output: {
+        assetFileNames: 'site-tour.css'
+      }
+    }
   },
   server: {
     watch: {

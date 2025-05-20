@@ -4,7 +4,7 @@ export function scrollToViewAndWait(target: Element): Promise<void> {
   return new Promise(resolve => {
     const isInView = isElementInView(target);
     if (isInView) {
-      resolve(); // Already in view, no need to scroll
+      resolve();
       return;
     }
     target.scrollIntoView({ behavior: "smooth", block: "center" });

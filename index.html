@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Solid Template</title>
+    <title>Site Tour</title>
     <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" rel="stylesheet" />
     <link rel="stylesheet" href="./src/tour.css" />
     <link rel="stylesheet" href="./style.css" />
@@ -36,13 +36,13 @@
           <div class="container">
             <div class="hero-inner">
               <div class="hero-copy">
-                <h1 class="hero-title mt-0">Landing template for startups</h1>
+                <h1 class="hero-title mt-0">This is demo site for Site tour</h1>
                 <p class="hero-paragraph">
                   Our landing page template works on all devices, so you only have to set it up once, and get beautiful
                   results forever.
                 </p>
                 <div class="hero-cta">
-                  <a class="button button-primary">Pre order now</a><a class="button" href="#">Get in touch</a>
+                  <a class="button button-primary">Start</a><a class="button" href="#">Get in touch</a>
                 </div>
               </div>
               <div class="hero-figure anime-element">
@@ -265,11 +265,9 @@
         </div>
       </footer>
     </div>
-
     <script src="js/main.js"></script>
     <script type="module">
       import { SiteTour } from './src/tour.ts';
-
       document.querySelector('.hero-cta .button-primary').addEventListener('click', init);
       let siteTour;
       function init() {
@@ -277,16 +275,15 @@
         siteTour = new SiteTour({
           tourSteps: [
             '.hero-title', '.hero-paragraph', '.hero-cta', 
-            '.feature:first-child',
-            '.feature:nth-child(2)',
-            '.feature:nth-child(3)',
-            '.feature:nth-child(4)', '.feature:last-child','.pricing-table', 
+            '.feature:first-child', '.pricing-table', 
           ].map((s, i) => {
             return {
               selector: s,
-              title: `Title ${i}`,
+              title: i === 0 ? 'Hey there!' : `Title ${i + 1}`,
               position: i === 2 ? 'bottom' : null,
-              content: i === 2 ? `It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.` : `Descrition ${i}`,
+              hidePrev: i === 0,
+              nextBtnText: i === 0 ? 'Start Tour' : null,
+              content: i === 0 ? 'This is just demo behaviour of site tour lib' : i === 2 ? `It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.` : `Descrition ${i + 1}`,
             }
           }),
           onFinishTour: () => {
@@ -295,16 +292,6 @@
           preventClose: false
         });
         siteTour.start();
-      }
-
-      function next() {
-        console.log('next');
-        siteTour.next();
-      }
-
-      function prev() {
-        console.log('prev');
-        siteTour.prev();
       }
     </script>
   </body>

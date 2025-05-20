@@ -1,7 +1,7 @@
 import { handleBackdropSvg } from "./backdrop";
 import { DEFAULT_OPTIONS, scrollToViewAndWait } from "./utils";
-import "./tour.css";
 import { calculatePosition, clearState, createPopover, updatePopoverContent } from "./popover";
+import "./site-tour.css";
 
 export interface TourOption {
   tourSteps: TourStep[];
@@ -21,7 +21,7 @@ export interface TourStep {
   hidePrev?: boolean;
 }
 
-export type Position = 'top' | 'bottom' | 'right' | 'left';
+export type Position = "top" | "bottom" | "right" | "left";
 
 export class SiteTour {
   private options: TourOption = DEFAULT_OPTIONS;
@@ -32,7 +32,7 @@ export class SiteTour {
   private backdrop!: SVGElement;
   private currentIndex = 0;
 
-  constructor(options: any) {
+  constructor(options: TourOption) {
     this.options = {
       ...DEFAULT_OPTIONS,
       ...options,
@@ -50,7 +50,7 @@ export class SiteTour {
     if (!this.options.tourSteps?.length) {
       return null;
     }
-    return this.currentIndex < this.options.tourSteps.length - 1;;
+    return this.currentIndex < this.options.tourSteps.length - 1;
   }
 
   get hasPrevStep(): boolean {
@@ -66,7 +66,7 @@ export class SiteTour {
       this.initializeEventListeners();
       this.showStep(this.currentIndex);
     } else {
-      console.error('Please provide tourSteps to begin...!')
+      console.error("Please provide tourSteps to begin...!");
     }
   }
 
@@ -166,7 +166,10 @@ export class SiteTour {
   }
 
   private positionPopover = () => {
-    const { topPosition, leftPosition } = calculatePosition(this.activeElement, this.currentStep?.position ?? this.options.position);
+    const { topPosition, leftPosition } = calculatePosition(
+      this.activeElement,
+      this.currentStep?.position ?? this.options.position
+    );
     // Apply the final calculated positions
     this.popoverElement.style.top = `${topPosition}px`;
     this.popoverElement.style.left = `${leftPosition}px`;
