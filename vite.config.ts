@@ -4,39 +4,38 @@ import { defineConfig, UserConfig } from "vite";
 
 export default defineConfig({
   base: "./",
-  plugins: [{
-    name: 'reload',
-    configureServer(server) {
-      const {
-        ws,
-        watcher
-      } = server;
-      watcher.on('change', file => {
-        if (file.endsWith('.html')) {
-          ws.send({
-            type: 'full-reload',
-          });
-        }
-      });
+  plugins: [
+    {
+      name: "reload",
+      configureServer(server) {
+        const { ws, watcher } = server;
+        watcher.on("change", file => {
+          if (file.endsWith(".html")) {
+            ws.send({
+              type: "full-reload",
+            });
+          }
+        });
+      },
     },
-  }, dts({ rollupTypes: true })],
+    dts({ rollupTypes: true }),
+  ],
   build: {
-    sourcemap: true,
     lib: {
       entry: path.resolve(__dirname, "src/tour.ts"),
       name: "siteTour",
-      formats: ["es", "cjs", "umd", "iife"],
-      fileName: (format) => `site-tour.${format}.js`,
+      formats: ["es", "cjs", "iife"],
+      fileName: format => `site-tour.${format}.js`,
     },
     rollupOptions: {
       output: {
-        assetFileNames: 'site-tour.css'
-      }
-    }
+        assetFileNames: "site-tour.css",
+      },
+    },
   },
   server: {
     watch: {
-        usePolling: true
-    }
-  }
+      usePolling: true,
+    },
+  },
 } satisfies UserConfig);

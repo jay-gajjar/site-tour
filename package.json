@@ -7,6 +7,9 @@
   "types": "dist/site-tour.d.ts",
   "style": "dist/site-tour.css",
   "type": "module",
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "types": "./dist/site-tour.d.ts",

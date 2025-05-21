@@ -15,7 +15,7 @@ Install site-tour with npm
     
 ## Configuration Options
 
-#### TourOptions
+**`TourOptions`**
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
@@ -25,7 +25,7 @@ Install site-tour with npm
 | `preventClose` | boolean | Prevent closing the tour by clicking outside or pressing ESC. |
 | `onFinishTour` | () => void | Callback function triggered after the last step is completed. |
 
-#### TourStep
+**`TourStep`**
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
@@ -41,7 +41,19 @@ Install site-tour with npm
 
 ## Usage
 
-```javascript
+#### Add default Styling
+
+```css
+// import in global style 
+@import 'site-tour/dist/site-tour.css';
+
+OR 
+
+// add it via CDN
+<link href="https://cdn.jsdelivr.net/npm/site-tour@latest/dist/site-tour.css" rel="stylesheet" type="text/css" />
+```
+
+```ts
 import { SiteTour, TourOption } from 'site-tour';
 
 const config: TourOption = {
