@@ -12,36 +12,15 @@ Install site-tour with npm
   npm install site-tour
 ```
 
-    
-## Configuration Options
+Install via CDN
 
-**`TourOptions`**
-
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `steps` | TourStep[] | **Required**. Array of steps in the tour. |
-| `position` | "top" \| "bottom" \| "right" \| "left" | Popover position. Default is 'right'. |
-| `padding` | number | Space (in pixels) around the target element. |
-| `preventClose` | boolean | Prevent closing the tour by clicking outside or pressing ESC. |
-| `onFinishTour` | () => void | Callback function triggered after the last step is completed. |
-
-**`TourStep`**
-
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `selector`      | string | **Required**. Target element to highlight. |
-| `title`      | string | **Required**. Title of the popover. |
-| `content`      | string | **Required**. Body content of the popover. |
-| `position` | "top" \| "bottom" \| "right" \| "left" | 	Step-specific popover position (overrides global `position`). |
-| `nextBtnText`      | string | Text for the “Next” button. |
-| `prevBtnText`      | string | Text for the “Previous” button. |
-| `hidePrev`      | string | 	Hides the “Previous” button on this step. |
-
-
+```javascript
+<script src="https://cdn.jsdelivr.net/npm/site-tour@latest/dist/site-tour.iife.js"></script>
+```
 
 ## Usage
 
-#### Add default Styling
+**Add default Styling**
 
 ```css
 // import in global style 
@@ -83,7 +62,41 @@ const tour = new SiteTour(config);
 tour.start();
 ```
 
+```ts
+// if imported library via CDN
 
+const tour = window.siteTour;
+const siteTour = new tour.SiteTour(...configs: TourOption);
+siteTour.start();
+```
+
+&nbsp;
+## Configuration Options
+
+**`TourOptions`**
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `steps` | TourStep[] | **Required**. Array of steps in the tour. |
+| `position` | "top" \| "bottom" \| "right" \| "left" | Popover position. Default is 'right'. |
+| `padding` | number | Space (in pixels) around the target element. |
+| `preventClose` | boolean | Prevent closing the tour by clicking outside or pressing ESC. |
+| `onFinishTour` | () => void | Callback function triggered after the last step is completed. |
+
+&nbsp;
+**`TourStep`**
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `selector`      | string | **Required**. Target element to highlight. |
+| `title`      | string | **Required**. Title of the popover. |
+| `content`      | string | **Required**. Body content of the popover. |
+| `position` | "top" \| "bottom" \| "right" \| "left" | 	Step-specific popover position (overrides global `position`). |
+| `nextBtnText`      | string | Text for the “Next” button. |
+| `prevBtnText`      | string | Text for the “Previous” button. |
+| `hidePrev`      | string | 	Hides the “Previous” button on this step. |
+
+&nbsp;
 ## License
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://choosealicense.com/licenses/mit/) 

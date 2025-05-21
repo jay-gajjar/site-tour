@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Site Tour</title>
     <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" rel="stylesheet" />
-    <link rel="stylesheet" href="./src/tour.css" />
     <link rel="stylesheet" href="./style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/site-tour@latest/dist/site-tour.iife.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/site-tour@latest/dist/site-tour.css" rel="stylesheet" type="text/css" />
   </head>
   <body class="is-boxed">
     <div class="body-wrap">
@@ -260,12 +261,10 @@
       </footer>
     </div>
     <script type="module">
-      import { SiteTour } from './src/tour.ts';
       document.querySelector('.hero-cta .button-primary').addEventListener('click', init);
-      let siteTour;
+      const tour = window.siteTour;
       function init() {
-        siteTour = null;
-        siteTour = new SiteTour({
+        const siteTour = new tour.SiteTour({
           tourSteps: [
             '.hero-title', '.hero-paragraph', '.hero-cta', 
             '.feature:first-child', '.pricing-table', 
