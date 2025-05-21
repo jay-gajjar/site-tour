@@ -1,6 +1,6 @@
 {
   "name": "site-tour",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Guide for users visits your site",
   "main": "dist/site-tour.cjs.js",
   "module": "dist/site-tour.es.js",
