@@ -63,14 +63,13 @@ tour.start();
 ```
 
 ```ts
-// if imported library via CDN
+// if library is imported via CDN
 
 const tour = window.siteTour;
 const siteTour = new tour.SiteTour(...configs: TourOption);
 siteTour.start();
 ```
 
-&nbsp;
 ## Configuration Options
 
 **`TourOptions`**
@@ -83,7 +82,6 @@ siteTour.start();
 | `preventClose` | boolean | Prevent closing the tour by clicking outside or pressing ESC. |
 | `onFinishTour` | () => void | Callback function triggered after the last step is completed. |
 
-&nbsp;
 **`TourStep`**
 
 | Parameter | Type     | Description                       |
@@ -96,7 +94,6 @@ siteTour.start();
 | `prevBtnText`      | string | Text for the “Previous” button. |
 | `hidePrev`      | string | 	Hides the “Previous” button on this step. |
 
-&nbsp;
 ## License
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://choosealicense.com/licenses/mit/) 
