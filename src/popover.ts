@@ -62,6 +62,9 @@ export function calculatePosition(
   topPosition: number;
   leftPosition: number;
 } {
+  if (!popoverElement) {
+    return null;
+  }
   const targetRect = activeEl.getBoundingClientRect();
   let topPosition = 0;
   let leftPosition = 0;

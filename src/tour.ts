@@ -9,6 +9,8 @@ export interface TourOption {
   padding?: number;
   preventClose?: boolean;
   onFinishTour?: () => void;
+  onNextStep?: () => void;
+  onPreStep?: () => void;
 }
 
 export interface TourStep {
@@ -79,10 +81,10 @@ export class SiteTour {
     this.highlightElement();
   }
 
-  private setActiveElement() {
-    const step = this.options.tourSteps[this.currentIndex];
-    if (!step) return;
-    const target = document.querySelector(step.selector);
+  private setActiveElement(step?: TourStep) {
+    const currentStep = step ?? this.options.tourSteps[this.currentIndex];
+    if (!currentStep) return;
+    const target = document.querySelector(currentStep.selector);
     if (!target) {
       console.error("Target element not found");
       return;
@@ -100,6 +102,9 @@ export class SiteTour {
       this.currentIndex = this.currentIndex + 1;
       this.setActiveElement();
       this.showStep();
+      if (this.options?.onNextStep) {
+        this.options.onNextStep();
+      }
     }
   }
 
@@ -111,6 +116,9 @@ export class SiteTour {
       this.currentIndex = this.currentIndex - 1;
       this.setActiveElement();
       this.showStep();
+      if (this.options?.onPreStep) {
+        this.options.onPreStep();
+      }
     }
   }
 
@@ -166,13 +174,13 @@ export class SiteTour {
   }
 
   private positionPopover = () => {
-    const { topPosition, leftPosition } = calculatePosition(
-      this.activeElement,
-      this.currentStep?.position ?? this.options.position
-    );
-    // Apply the final calculated positions
-    this.popoverElement.style.top = `${topPosition}px`;
-    this.popoverElement.style.left = `${leftPosition}px`;
+    const pos = calculatePosition(this.activeElement, this.currentStep?.position ?? this.options.position);
+    if (pos) {
+      const { topPosition, leftPosition } = pos;
+      // Apply the final calculated positions
+      this.popoverElement.style.left = `${leftPosition}px`;
+      this.popoverElement.style.top = `${topPosition}px`;
+    }
     return;
   };
 

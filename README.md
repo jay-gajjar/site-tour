@@ -80,7 +80,10 @@ siteTour.start();
 | `position` | "top" \| "bottom" \| "right" \| "left" | Popover position. Default is 'right'. |
 | `padding` | number | Space (in pixels) around the target element. |
 | `preventClose` | boolean | Prevent closing the tour by clicking outside or pressing ESC. |
+| `onNextStep` | () => void | Callback function triggered on move to next step. |
+| `onPrevStep` | () => void | Callback function triggered on move to previous step. |
 | `onFinishTour` | () => void | Callback function triggered after the last step is completed. |
+
 
 **`TourStep`**
 
