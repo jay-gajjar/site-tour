@@ -13,6 +13,7 @@ export function createPopover(next: () => void, prev: () => void): HTMLElement {
           <div class="tour-header"></div>
           <div class="tour-content"></div>
           <div class="tour-footer">
+            <div class="tour-step-count"></div>
             <button class="tour-btn tour-prev-btn">\u2190 Prev</button>
             <button class="tour-btn tour-next-btn">Next \u2192</button>
           </div>
@@ -34,7 +35,7 @@ export function createPopover(next: () => void, prev: () => void): HTMLElement {
   return popoverElement;
 }
 
-export function updatePopoverContent(currentIndex: number, steps: TourStep[]) {
+export function updatePopoverContent(currentIndex: number, steps: TourStep[], showProgress: boolean) {
   const currentStep = steps[currentIndex];
   if (!currentStep) {
     return;
@@ -52,6 +53,12 @@ export function updatePopoverContent(currentIndex: number, steps: TourStep[]) {
   if (prevButton) {
     prevButton.disabled = currentIndex === 0;
     prevButton.style.opacity = currentStep.hidePrev ? "0" : prevButton.disabled ? "0.7" : "1";
+  }
+  const stepCountEl = popoverHTML.querySelector(".tour-step-count") as HTMLDivElement;
+  if (!showProgress) {
+    stepCountEl.style.display = "none";
+  } else {
+    stepCountEl.innerHTML = `${currentIndex + 1} of ${steps.length}`;
   }
 }
 

@@ -6,6 +6,7 @@ import "./site-tour.css";
 export interface TourOption {
   tourSteps: TourStep[];
   position?: Position;
+  showTourProgress?: boolean;
   padding?: number;
   preventClose?: boolean;
   onFinishTour?: () => void;
@@ -169,7 +170,7 @@ export class SiteTour {
 
   private createOrUpdatePopover() {
     this.popoverElement = createPopover(this.handleNextClick.bind(this), this.handlePrevClick.bind(this));
-    updatePopoverContent(this.currentIndex, this.options.tourSteps);
+    updatePopoverContent(this.currentIndex, this.options.tourSteps, !!this.options?.showTourProgress);
     this.positionPopover();
   }
 

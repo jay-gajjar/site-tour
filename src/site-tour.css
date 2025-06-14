@@ -14,6 +14,14 @@
   color: #000;
 }
 
+.tour-step-count {
+  max-width: 100px;
+  white-space: nowrap;
+  font-size: 12px;
+  color: #000;
+  align-self: center;
+}
+
 .tour-content {
   color: #000;
   margin-top: 6px;
@@ -65,11 +73,7 @@
 .tour-popover {
   position: fixed;
   border-radius: 0.375rem;
-  border: 1px solid #e2e8f0;
   background-color: #fff;
-  box-shadow:
-    0 0.5em 1em -0.125em #0a0a0a1a,
-    0 0 0 1px #0a0a0a05;
   z-index: 1001;
   transition:
     opacity 0.4s ease,
@@ -102,7 +106,7 @@
   transform: translateX(-50%);
   border-width: 0 8px 8px; /* Arrow size */
   border-color: transparent transparent #fff;
-  border-bottom-color: #e2e8f0; /* Border color */
+  border-bottom-color: #fff; /* Border color */
 }
 
 /* Arrow for bottom position */
@@ -112,7 +116,7 @@
   transform: translateX(-50%);
   border-width: 8px 8px 0;
   border-color: #fff transparent transparent;
-  border-top-color: #e2e8f0;
+  border-top-color: #fff;
 }
 
 /* Arrow for left position */
@@ -122,7 +126,7 @@
   transform: translateY(-50%);
   border-width: 8px 8px 8px 0;
   border-color: transparent #fff transparent transparent;
-  border-right-color: #e2e8f0;
+  border-right-color: #fff;
 }
 
 /* Arrow for right position */
@@ -132,7 +136,7 @@
   transform: translateY(-50%);
   border-width: 8px 0 8px 8px;
   border-color: transparent transparent transparent #fff;
-  border-left-color: #e2e8f0;
+  border-left-color: #fff;
 }
 @keyframes animate-fade-in {
   0% {

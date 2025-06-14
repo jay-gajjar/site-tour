@@ -77,6 +77,7 @@ siteTour.start();
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
 | `steps` | TourStep[] | **Required**. Array of steps in the tour. |
+| `showTourProgress` | boolean | To Show current tour progress. |
 | `position` | "top" \| "bottom" \| "right" \| "left" | Popover position. Default is 'right'. |
 | `padding` | number | Space (in pixels) around the target element. |
 | `preventClose` | boolean | Prevent closing the tour by clicking outside or pressing ESC. |
