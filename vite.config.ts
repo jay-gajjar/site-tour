@@ -21,7 +21,6 @@ export default defineConfig({
     dts({ rollupTypes: true }),
   ],
   build: {
-    outDir: "docs",
     lib: {
       entry: path.resolve(__dirname, "src/tour.ts"),
       name: "siteTour",

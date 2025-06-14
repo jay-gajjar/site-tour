@@ -7,8 +7,167 @@
     <title>Site Tour</title>
     <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="stylesheet" href="./style.css" />
+    <!-- <script src="https://cdn.jsdelivr.net/npm/site-tour@latest/dist/site-tour.iife.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/site-tour@latest/dist/site-tour.css" rel="stylesheet" type="text/css" /> -->
+    <script type="module" src="../src/tour.ts"></script>
+    <!-- <link href="./src/site-tour.css" rel="stylesheet" type="text/css" /> -->
   </head>
-  <body>
-    <h1> Coming soon...</h1>
+  <body class="is-boxed">
+    <div class="body-wrap">
+      <header class="site-header">
+        <div class="container">
+          <div class="site-header-inner">
+            <div class="brand header-brand">
+              <div class="logo-wrapper">
+                site<span>Tour</span>
+              </div>
+            </div>
+            <div class="header-action">
+              <a href="https://github.com/jay-gajjar/site-tour" target="_blank">
+                <img width="30" src="assets/images/github.svg" alt="git-hub" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="container">
+            <div class="hero-inner">
+              <div class="hero-copy">
+                <h1 class="hero-title mt-0"><b>Hello!</b></h1>
+                <p class="hero-paragraph">
+                  This package allow developers to create interactive walkthroughs that guide users through key features and functionalities of their website/applications.
+                </p>
+                <!-- <div class="hero-cta">
+                  <a class="button button-primary">Start Demo</a>
+                </div> -->
+              </div>
+              <div class="hero-right">
+                <div class="heading"><b>Site Tour</b></div>
+                <p class="desc">
+                  It is a simple, free & lightweight tour library for your website. Click <b>Start Tour</b> for demo.
+                </p>
+                <div class="action-wrap">
+                <div class="hero-cta">
+                  <a class="button button-primary">See Demo</a>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="features section">
+          <div class="container">
+            <div class="features-inner section-inner has-bottom-divider">
+              <div class="features-wrap">
+                <div class="feature text-center is-revealing">
+                  <div class="feature-inner">
+                    <div class="feature-icon">
+                      <img src="assets/images/feature-1.svg" alt="Feature 01" />
+                    </div>
+                    <h4 class="feature-title mt-24">User Onboarding</h4>
+                    <p class="text-sm mb-0">
+                      Guided tours are a great way to welcome new users and explain the core functionality of an application.
+                    </p>
+                  </div>
+                </div>
+                <div class="feature text-center is-revealing">
+                  <div class="feature-inner">
+                    <div class="feature-icon">
+                      <img src="assets/images/feature-2.svg" alt="Feature 02" />
+                    </div>
+                    <h4 class="feature-title mt-24">Feature Visibility</h4>
+                    <p class="text-sm mb-0">
+                      They highlight important features and help users understand how to use them effectively.
+                    </p>
+                  </div>
+                </div>
+                <div class="feature text-center is-revealing">
+                  <div class="feature-inner">
+                    <div class="feature-icon">
+                      <img src="assets/images/feature-3.svg" alt="Feature 03" />
+                    </div>
+                    <h4 class="feature-title mt-24">Improved User Experience</h4>
+                    <p class="text-sm mb-0">
+                      By providing a structured and intuitive experience, guided tours can increase user engagement and satisfaction. 
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div class="container">
+          <div class="site-footer-inner">
+            <div class="brand footer-brand">
+              <div class="logo-wrapper">
+                site<span>Tour</span>
+              </div>
+            </div>
+            <div class="footer-copyright">&copy; 2025 Site Tour, all rights reserved</div>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <script type="module">
+      import { SiteTour } from '../src/tour.ts';
+      document.querySelector('.hero-cta .button-primary').addEventListener('click', init);
+      const steps = [
+        // {
+        //   selector: '.hero-title',
+        //   title: 'Welcome!',
+        //   hidePrev: true,
+        //   nextBtnText: 'Start Tour',
+        //   content: 'It is a simple and lightweight tour library for your website. Click <b>Start Tour</b> to begin.',
+        // },
+        {
+          selector: '.hero-paragraph',
+          title: 'What it does...',
+          content: 'Easily add an interactive walkthrough to your website for a better user experience.',
+        },
+        {
+          selector: '.feature:first-child',
+          title: 'For Onboarding',
+          content: 'Useful to provide functionalities like onboarding, welcome guide etc. to your site.',
+        },
+        {
+          selector: '.feature:nth-child(2)',
+          title: 'Highlight Features',
+          content: 'Draws attention to key features of the site and helps improve user engagement.',
+        },
+        {
+          selector: '.feature:last-child',
+          title: 'User Experience',
+          content: 'Enhances user experience and increases engagement.',
+        },
+        {
+          selector: '.footer-brand .logo-wrapper',
+          title: 'Finish!',
+          hidePrev: true,
+          position: 'top',
+          nextBtnText: 'Docs',
+          content: 'Click <b>Docs</b> to view the documentation and start integrating it into your site.',
+        },
+      ];
+      function init() {
+        const tour = window.siteTour;
+        // const siteTour = new tour.SiteTour({
+        const siteTour = new SiteTour({
+          tourSteps: steps,
+          onFinishTour: () => {
+            window.open('https://www.npmjs.com/package/site-tour', '_blank').focus();
+          },
+          preventClose: false
+        });
+        siteTour.start();
+      }
+    </script>
   </body>
 </html>

@@ -128,6 +128,7 @@ export class SiteTour {
       document.body.addEventListener("click", this.bodyClickEvent);
       window.addEventListener("resize", this.updateHighlight);
       window.addEventListener("scroll", this.updateHighlight);
+      document.addEventListener("keydown", this.keyDownEvent);
       this.listenersInitialized = true;
     }
   }
@@ -137,6 +138,7 @@ export class SiteTour {
     document.body.removeEventListener("click", this.bodyClickEvent);
     window.removeEventListener("resize", this.updateHighlight);
     window.removeEventListener("scroll", this.updateHighlight);
+    document.removeEventListener("keydown", this.keyDownEvent);
     this.backdrop?.remove();
     this.popoverElement?.remove();
     clearState();
@@ -212,7 +214,15 @@ export class SiteTour {
     this.positionPopover();
   };
 
-  private bodyClickEvent = (event: any) => {
+  private keyDownEvent = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      if (!this.options.preventClose) {
+        this.destroy();
+      }
+    }
+  };
+
+  private bodyClickEvent = (event: Event) => {
     const target = event.target as HTMLElement;
     // Check if the click was on a highlight SVG
     if (target.parentElement?.matches(".tour-highlight-svg")) {

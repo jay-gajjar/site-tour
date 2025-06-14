@@ -4,6 +4,13 @@
 A customizable, step by step guided walkthrough/tour system for websites.
 
 
+
+## Demo
+
+[See Demo](https://jay-gajjar.github.io/site-tour/)
+
+
+
 ## Installation
 
 Install site-tour with npm
@@ -86,6 +93,7 @@ siteTour.start();
 | `onFinishTour` | () => void | Callback function triggered after the last step is completed. |
 
 
+
 **`TourStep`**
 
 | Parameter | Type     | Description                       |
@@ -97,6 +105,7 @@ siteTour.start();
 | `nextBtnText`      | string | Text for the “Next” button. |
 | `prevBtnText`      | string | Text for the “Previous” button. |
 | `hidePrev`      | string | 	Hides the “Previous” button on this step. |
+
 
 ## License
 
