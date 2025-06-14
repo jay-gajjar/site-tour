@@ -8,10 +8,8 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
     <link rel="stylesheet" href="./style.css" />
-    <!-- <script src="https://cdn.jsdelivr.net/npm/site-tour@latest/dist/site-tour.iife.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/site-tour@latest/dist/site-tour.css" rel="stylesheet" type="text/css" /> -->
-    <script type="module" src="../src/tour.ts"></script>
-    <!-- <link href="./src/site-tour.css" rel="stylesheet" type="text/css" /> -->
+    <script src="https://cdn.jsdelivr.net/npm/site-tour@latest/dist/site-tour.iife.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/site-tour@latest/dist/site-tour.css" rel="stylesheet" type="text/css" />
   </head>
   <body class="is-boxed">
     <div class="body-wrap">
@@ -117,16 +115,9 @@
       </footer>
     </div>
     <script type="module">
-      import { SiteTour } from '../src/tour.ts';
+      // import { SiteTour } from '../src/tour.ts';
       document.querySelector('.hero-cta .button-primary').addEventListener('click', init);
       const steps = [
-        // {
-        //   selector: '.hero-title',
-        //   title: 'Welcome!',
-        //   hidePrev: true,
-        //   nextBtnText: 'Start Tour',
-        //   content: 'It is a simple and lightweight tour library for your website. Click <b>Start Tour</b> to begin.',
-        // },
         {
           selector: '.hero-paragraph',
           title: 'What it does...',
@@ -158,8 +149,8 @@
       ];
       function init() {
         const tour = window.siteTour;
-        // const siteTour = new tour.SiteTour({
-        const siteTour = new SiteTour({
+        const siteTour = new tour.SiteTour({
+        // const siteTour = new SiteTour({
           tourSteps: steps,
           onFinishTour: () => {
             window.open('https://www.npmjs.com/package/site-tour', '_blank').focus();
